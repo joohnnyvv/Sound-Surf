@@ -1,0 +1,42 @@
+<div
+  class="authorized-wrapper"
+  *ngIf="isLoading$ | async; else notLoadingBlock"
+>
+  <div class="authorized-content-wrapper">
+    <p>Loading</p>
+  </div>
+</div>
+
+<ng-template #notLoadingBlock>
+  <div class="authorized-wrapper">
+    <ng-container *ngIf="denied; else codeBlock">
+      <div class="authorized-content-wrapper">
+        <p>
+          Access denied. You can't use this app until you authorize yourself
+        </p>
+        <button
+          class="back-to-registration-button"
+          (click)="navigateToRegistrationPage()"
+        >
+          Navigate to authorization page
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #codeBlock>
+      <ng-container *ngIf="code">
+        <div class="authorized-content-wrapper">
+          <ng-container *ngIf="!(errors$ | async); else errorBlock">
+            <p *ngIf="!isLoading$ && (accessTokenResponse$ | async)">
+              Authorization successful, you'll be automatically redirected
+            </p>
+          </ng-container>
+
+          <ng-template #errorBlock>
+            <p>Couldn't authorize: {{ errors$ | async | json }}</p>
+          </ng-template>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
+</ng-template>
